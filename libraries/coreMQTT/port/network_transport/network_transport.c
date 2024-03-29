@@ -21,7 +21,8 @@ TlsTransportStatus_t xTlsConnect( NetworkContext_t* pxNetworkContext )
         .ds_data = pxNetworkContext->ds_data,
         .clientkey_buf = ( const unsigned char* )( pxNetworkContext->pcClientKey ),
         .clientkey_bytes = pxNetworkContext->pcClientKeySize,
-        .timeout_ms = 1000,
+        .timeout_ms = 100,
+        //.non_block = true,
     };
 
     esp_tls_t* pxTls = esp_tls_init();
@@ -40,6 +41,13 @@ TlsTransportStatus_t xTlsConnect( NetworkContext_t* pxNetworkContext )
             pxNetworkContext->pxTls = NULL;
         }
         xRet = TLS_TRANSPORT_CONNECT_FAILURE;
+    }
+    else
+    {
+        // /* set recv timeout (5 ms) */
+        // int opt = 5;
+        // ret = setsockopt( pxNetworkContext->pxTls->sockfd, SOL_SOCKET, SO_RCVTIMEO, &opt, sizeof(int) );
+        // LWIP_ASSERT("ret == 0", ret == 0);
     }
 
     xSemaphoreGive(pxNetworkContext->xTlsContextSemaphore);
